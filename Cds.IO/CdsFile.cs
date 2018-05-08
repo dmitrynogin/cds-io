@@ -30,6 +30,17 @@ namespace Cds.IO
             return file;
         }
 
+        public void Save(string path, bool binary = false) =>
+            Save(File.OpenWrite(path), binary);
+
+        public void Save(Stream stream, bool binary = false)
+        {
+            if (binary)
+                Save(new BinaryWriter(stream));
+            else
+                Save(new StreamWriter(stream));
+        }
+
         public void Save(BinaryWriter writer) => 
             this.Write(writer);
 

@@ -50,5 +50,7 @@ namespace Cds.IO
         }
 
         public string Text => $"{Attribute.Name} (v{Version})";
+
+        public IEnumerable<FileField> Fields => FileField.Of(Type);
     }
 }

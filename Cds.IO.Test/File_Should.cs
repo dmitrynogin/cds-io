@@ -11,16 +11,17 @@ namespace Cds.IO.Test
         public void Persist()
         {
             var file = TestFile.Load("Test.txt");
+            file.Save("Copy.txt");
 
-            //var file = new TestFile()
-            //{
-            //    Header = new HeaderSection { Type = "Test", Version = "3.4" },
-            //    Data = new []
-            //    {
-            //        new DataSection { Depth = 1, Tip = 2 },
-            //        new DataSection { Depth = 3, Tip = 4 }
-            //    }
-            //};
+            var copy = TestFile.Load("Copy.txt");
+
+            Assert.AreEqual(file.Header.Type, copy.Header.Type);
+            Assert.AreEqual(file.Header.Version, copy.Header.Version);
+
+            Assert.AreEqual(file.Data[0].Depth, copy.Data[0].Depth);
+            Assert.AreEqual(file.Data[0].Tip, copy.Data[0].Tip);
+            Assert.AreEqual(file.Data[1].Depth, copy.Data[1].Depth);
+            Assert.AreEqual(file.Data[1].Tip, copy.Data[1].Tip);
         }
     }
 

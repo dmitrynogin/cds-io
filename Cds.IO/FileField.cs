@@ -33,5 +33,8 @@ namespace Cds.IO
             get => Property.GetValue(section);
             set => Property.SetValue(section, value);
         }
+
+        public object Format(object section) =>
+            string.Format("{0:" + Attribute.Format + "}", this[section]);        
     }
 }

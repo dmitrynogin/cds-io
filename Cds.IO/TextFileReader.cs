@@ -12,8 +12,9 @@ namespace Cds.IO
     {
         public static void Read<T>(this CdsFile<T> file, TextReader reader) where T : CdsFile<T>, new()
         {
-            foreach (var section in FileSection.Of(file))
-                section.Object = reader.Read(section);
+            using (reader)
+                foreach (var section in FileSection.Of(file))
+                    section.Object = reader.Read(section);
         }
 
         static object Read(this TextReader reader, FileSection section) =>
@@ -27,7 +28,7 @@ namespace Cds.IO
             if (!reader.TryReadHeader(section))
                 throw new FormatException($"Section {section.Text} not found or out of order.");
 
-            var fields = FileField.Of(section.Type)
+            var fields = section.Fields
                 .ToDictionary(f => f.Name);
 
             while (reader.TryReadProperty(out var name, out var value))
@@ -75,7 +76,7 @@ namespace Cds.IO
             var line = reader.ReadLine()?.Trim();
             return line != null 
                 && line.StartsWith("#") && 
-                FileField.Of(section.Type).All(f => line.Contains(f.Name));
+                section.Fields.All(f => line.Contains(f.Name));
         }
 
         static bool TryReadRow(this TextReader reader, FileSection section, out object row)
@@ -89,7 +90,7 @@ namespace Cds.IO
                 .Select((v, i) => new { Value = v.Trim(), Index = i })
                 .ToDictionary(x => x.Index, x => x.Value);
             
-            foreach (var x in FileField.Of(section.Type).Select((f, i) => new { Field = f, Index = i }))
+            foreach (var x in section.Fields.Select((f, i) => new { Field = f, Index = i }))
                 x.Field[row] = Convert.ChangeType(values[x.Index], x.Field.Type);
 
             return true;
